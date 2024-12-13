@@ -133,11 +133,18 @@ class ProxyServer(asyncio.Protocol):
         self.transport.write(
             pack('!BBBBIH', 0x05, 0x00, 0x00, 0x01, host, port))
 
+async def screen_ticker():
+    cnt = 1
+    while True:
+        print('keep alive: {}', cnt)
+        await asyncio.sleep(2)
+        cnt +=1
+
 
 if __name__ == '__main__':
     # config
     debug = config.getboolean('default', 'debug')
-    server = config.get('default', 'server')
+    server = '0.0.0.0' # config.get('default', 'server')
     server_port = config.getint('default', 'server_port')
 
     if debug:
@@ -158,5 +165,5 @@ if __name__ == '__main__':
 
     srv = loop.create_server(ProxyServer, server, server_port)
     logging.info('start server at {}:{}'.format(server, server_port))
-    loop.run_until_complete(srv)
+    loop.run_until_complete(asyncio.gather(srv, screen_ticker()))
     loop.run_forever()
