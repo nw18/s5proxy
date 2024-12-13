@@ -162,7 +162,7 @@ if __name__ == '__main__':
     if debug:
         loop.set_debug(enabled=True)
     loop.set_debug(enabled=True)
-
+    print('create server at {}:{}'.format(server, server_port))
     srv = loop.create_server(ProxyServer, server, server_port)
     logging.info('start server at {}:{}'.format(server, server_port))
     loop.run_until_complete(asyncio.gather(srv, screen_ticker()))
