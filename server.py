@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
 import logging
+import signal
 import socket
 import asyncio
 from struct import pack, unpack
@@ -143,8 +145,8 @@ async def screen_ticker():
 
 if __name__ == '__main__':
     # config
+    server = config.get('default', 'server')
     debug = config.getboolean('default', 'debug')
-    server = '0.0.0.0' # config.get('default', 'server')
     server_port = config.getint('default', 'server_port')
 
     if debug:
@@ -162,8 +164,19 @@ if __name__ == '__main__':
     if debug:
         loop.set_debug(enabled=True)
     loop.set_debug(enabled=True)
-    print('create server at {}:{}'.format(server, server_port))
+    def the_stop():
+        loop.stop()
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
+    if os.name != 'nt':
+        loop.add_signal_handler(signal.SIGINT, the_stop)
+        loop.add_signal_handler(signal.SIGTERM, the_stop)
     srv = loop.create_server(ProxyServer, server, server_port, family=socket.AF_INET)
     logging.info('start server at {}:{}'.format(server, server_port))
-    loop.run_until_complete(asyncio.gather(srv, screen_ticker()))
-    loop.run_forever()
+    try:
+        loop.run_until_complete(asyncio.gather(srv, screen_ticker()))
+    except KeyboardInterrupt:
+        logging.error('KeyboardInterrupt')
+        pass
+    finally:
+        pass

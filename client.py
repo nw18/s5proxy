@@ -77,7 +77,7 @@ class Server(asyncio.Protocol):
             pass
 
         # config
-        server = config.get('default', 'server')
+        server = config.get('default', 'remote')
         server_port = config.getint('default', 'server_port')
 
         loop = asyncio.get_event_loop()
