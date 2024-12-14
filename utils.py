@@ -2,9 +2,7 @@
 import os
 import configparser
 
-
-_base_dir = os.path.abspath(os.path.dirname(__name__))
-
+_base_dir = os.path.dirname(__file__)
 
 def load_config(filename):
     """
@@ -12,6 +10,7 @@ def load_config(filename):
     """
     config = configparser.ConfigParser()
     config.read(os.path.join(_base_dir, filename))
+    print(_base_dir, filename, os.path.join(_base_dir, filename))
     if 'default' not in config:
         raise IOError('Unable to load configuration file "{}"'.format(filename))
 

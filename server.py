@@ -160,7 +160,8 @@ if __name__ == '__main__':
                         datefmt='%Y-%m-%d %H:%M:%S', filemode='a+')
     logging.getLogger('asyncio').setLevel(debug_level)
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     if debug:
         loop.set_debug(enabled=True)
     loop.set_debug(enabled=True)
